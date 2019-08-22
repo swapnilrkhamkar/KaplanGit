@@ -8,17 +8,17 @@
     tools:context=".MapsActivity">
 
 
-<com.google.android.material.card.MaterialCardView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="20sp"
-    android:id="@+id/card"/>
-
-    <fragment android:id="@+id/autocomplete_fragment"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="20sp" />
+
+    <fragment
+        android:id="@+id/autocomplete_fragment"
         android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -28,6 +28,5 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/card" />
-
 
 </RelativeLayout>

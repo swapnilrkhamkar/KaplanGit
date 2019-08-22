@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.FragmentActivity;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.button.MaterialButton;
@@ -45,6 +47,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Place place;
     private TextView txtCity, txtTemp, txtWeather, txtWind, txtHumidity;
     private MaterialButton materialButtonOk;
+    private Dialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +84,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         // Specify the types of place data to return.
         if (autocompleteFragment != null) {
             autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+            autocompleteFragment.setTypeFilter(TypeFilter.CITIES);
             autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
 
                 @Override
@@ -117,6 +121,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 Log.e("MARKER",  " " + marker.getPosition());
 
+                loadData();
                 showWeather(marker.getPosition());
 
                 return false;
@@ -148,6 +153,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Log.e("Val ", "Wind Speed " + value.getWind().getSpeed());
                     Log.e("Val ", "Humidity " + value.getMain().getHumidity());
 
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
+                    }
+
                     LayoutInflater inflater = LayoutInflater.from(MapsActivity.this);
                     MaterialCardView cardView = (MaterialCardView) inflater.inflate(R.layout.lay_weather_popup, null, false);
 
@@ -177,10 +186,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
                     });
 
-//                    if (progressDialog != null) {
-//                        progressDialog.dismiss();
-//                    }
-
                 } catch (Exception e) {
                 }
             }
@@ -190,9 +195,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 try {
 
-//                    if (progressDialog != null) {
-//                        progressDialog.dismiss();
-//                    }
+                    if (progressDialog != null) {
+                        progressDialog.dismiss();
+                    }
 
                     Log.e("ERROR", " " + e);
 
@@ -242,5 +247,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void loadData() {
+
+        progressDialog = new Dialog(MapsActivity.this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        progressDialog.setContentView(R.layout.lay_loader);
+        TextView loaderTitle = progressDialog.findViewById(R.id.loaderTitle);
+        loaderTitle.setText("Loading");
+        progressDialog.show();
     }
 }
